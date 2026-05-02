@@ -4,4 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "mitmproxy>=12.2.2",
+    "rich>=15.0.0",
+    "tomli>=2.4.1",
+    "tomli-w>=1.2.0",
+    "typer>=0.25.1",
+]
