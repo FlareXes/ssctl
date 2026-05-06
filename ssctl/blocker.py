@@ -1,4 +1,5 @@
 from mitmproxy import http
+
 from ssctl.config import load_config
 from ssctl.policy import Policy
 
@@ -11,7 +12,7 @@ def request(flow: http.HTTPFlow):
     policy = Policy(config)
 
     # capture domain e.g. google.com, flarexes.com
-    host = flow.request.pretty_host
+    host = flow.request.pretty_host.lower()
 
     if policy.is_blocked(host):
         flow.response = http.Response.make(

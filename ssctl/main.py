@@ -1,12 +1,10 @@
-import os
-import subprocess
-import tomllib
-
 import tomli_w
 import typer
 
 from ssctl.config import CONFIG_PATH, load_config
+from ssctl.helper import typed_config_to_dict
 from ssctl.proxy import start_proxy
+from ssctl.types import Action, Rule
 
 app = typer.Typer()
 
@@ -19,32 +17,36 @@ def start():
 
 @app.command()
 def block(domain: str):
+    domain = domain.lower()  # sanitize
     config = load_config()
-    if domain not in config["blocklist"]["domains"]:
-        config["blocklist"]["domains"].append(domain)
-    else:
-        typer.echo(f"Already exist {domain}")
+    domains = [r.domain for r in config.rules]
 
-    CONFIG_PATH.write_text(tomli_w.dumps(config))
+    if domain in domains:
+        typer.echo(f"Already exist {domain}")
+        return
+
+    config.rules.append(Rule(action=Action.BLOCK, domain=domain))
+
+    # convert typed → dict → TOML
+    CONFIG_PATH.write_text(tomli_w.dumps(typed_config_to_dict(config)))
+
     typer.echo(f"Blocked {domain}")
 
 
 @app.command()
-def unblock(domain: str):
-    config = load_config()
-    if domain in config["blocklist"]["domains"]:
-        config["blocklist"]["domains"].remove(domain)
-        CONFIG_PATH.write_text(tomli_w.dumps(config))
-        typer.echo(f"Unblocked {domain}")
-    else:
-        typer.echo(f"Doesn't exist {domain}")
+def unblock():
+    # Why? It's difficult to remove rules
+    # if multiple rules are present under same domain
+    # next step -> multi select mode or GUI
+    typer.echo(f"Users have to remove the rule directly from {CONFIG_PATH}")
 
 
 @app.command()
 def list():
-    data = tomllib.loads(CONFIG_PATH.read_text())
-    for d in data["blocklist"]["domains"]:
-        print(d)
+    config = load_config()
+    for rule in config.rules:
+        typer.echo(f"{rule.action.value} -> {rule.domain}")
+        # typer.echo(f"{rule.action.value} -> {rule.domain}{rule.path or ''}")
 
 
 if __name__ == "__main__":

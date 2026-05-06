@@ -34,8 +34,8 @@ def load_config() -> Config:
             continue
 
         rule = Rule(
-            # if "action" missing → default to "block"
-            action=rule.get("action", Action.ALLOW),
+            # if "action" missing → default to "allow"
+            action=Action(rule.get("action", "allow")),
             domain=domain.lower(),
             path=rule.get("path"),
         )
