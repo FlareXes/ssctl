@@ -2,7 +2,8 @@ import tomli_w
 import typer
 
 from ssctl.config import CONFIG_PATH, load_config
-from ssctl.helper import typed_config_to_dict
+from ssctl.exceptions import InvalidDomainError
+from ssctl.helper import sanitize_domain, typed_config_to_dict
 from ssctl.proxy import start_proxy
 from ssctl.types import Action, Rule
 
@@ -17,7 +18,12 @@ def start():
 
 @app.command()
 def block(domain: str):
-    domain = domain.lower()  # sanitize
+    try:
+        domain = sanitize_domain(domain)
+    except InvalidDomainError as e:
+        typer.echo(f"Invalid domain '{domain}': {e}")
+        raise typer.Exit(1)
+
     config = load_config()
     domains = [r.domain for r in config.rules]
 

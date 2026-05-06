@@ -13,6 +13,7 @@ def request(flow: http.HTTPFlow):
 
     # capture domain e.g. google.com, flarexes.com
     host = flow.request.pretty_host.lower()
+    host = host.encode("idna").decode("ascii")
 
     if policy.is_blocked(host):
         flow.response = http.Response.make(
