@@ -10,23 +10,23 @@ Right now this is just an early prototype built to experiment with:
 
 The long-term goal is .... IDK, we'll see.
 
-## Current State
+### Current State
 
-Things will break.
-TLS interception is messy.
-Browser behavior varies.
-The architecture will likely change a lot.
+- Things will break.
+- TLS interception is messy.
+- Browser behavior varies.
+- The architecture will likely change a lot.
 
-## Current Features
+### Current Features
 
 - Local HTTPS/TLS interception
 - Domain blocking
 - TOML-based configuration
 - Embedded mitmproxy runtime
 
-# Setup
+## Setup
 
-## Requirements
+**Requirements**
 
 - Linux
 - Python 3.12+
@@ -44,11 +44,9 @@ Start ssctl
 uv run python -m ssctl.main start
 ```
 
-This won't work yet because ssctl uses local TLS interception for HTTPS filtering.
+This won't work yet because ssctl uses local TLS interception for HTTPS filtering. You must trust the generated CA certificate or browsers will reject HTTPS traffic.
 
-You must trust the generated CA certificate or browsers will reject HTTPS traffic.
-
-**Arch Linux**
+#### Arch Linux
 
 Install the CA certificate:
 
@@ -62,7 +60,7 @@ Refresh trust store:
 sudo trust extract-compat
 ```
 
-**Ubuntu / Debian**
+#### Ubuntu / Debian
 
 Install the CA certificate:
 
@@ -95,7 +93,7 @@ chrome
 
 Transparent system-wide interception without proxy exports will come later. Firefox-based browsers may ignore system certificates by default.
 
-To fix firefox, Go to:
+To fix Firefox, Go to:
 
 ```
 about:config
