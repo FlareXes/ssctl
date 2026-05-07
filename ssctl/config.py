@@ -1,9 +1,7 @@
 import tomllib
-from pathlib import Path
 
+from ssctl.path import CONFIG_FILE
 from ssctl.types import Action, Config, GlobalConfig, Rule
-
-CONFIG_PATH = Path.home() / ".ssctl.toml"
 
 DEFAULT_CONFIG = """
 [global]
@@ -11,15 +9,15 @@ default = "allow"
 
 [[rules]]
 action = "block"
-domain = "example.com"
+domain = "ssctl-example.com"
 """
 
 
 def load_config() -> Config:
-    if not CONFIG_PATH.exists():
-        CONFIG_PATH.write_text(DEFAULT_CONFIG)
+    if not CONFIG_FILE.exists():
+        CONFIG_FILE.write_text(DEFAULT_CONFIG)
 
-    data = tomllib.loads(CONFIG_PATH.read_text())
+    data = tomllib.loads(CONFIG_FILE.read_text())
 
     # get defualt global config
     global_cfg_default = data.get("global", {}).get("default", "allow")

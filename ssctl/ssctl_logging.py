@@ -4,16 +4,11 @@ Central logging configuration for ssctl.
 
 import logging
 import time
-from pathlib import Path
+
+from ssctl.path import LOG_FILE
 
 # force UTC timestamps
 logging.Formatter.converter = time.gmtime
-
-# log file path
-LOG_DIR = Path.home() / ".local/share/ssctl/logs"
-LOG_DIR.mkdir(parents=True, exist_ok=True)
-
-LOG_FILE = LOG_DIR / "ssctl.log"
 
 
 def setup_logging() -> None:

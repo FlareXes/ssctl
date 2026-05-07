@@ -1,9 +1,10 @@
 import tomli_w
 import typer
 
-from ssctl.config import CONFIG_PATH, load_config
+from ssctl.config import load_config
 from ssctl.exceptions import InvalidDomainError
 from ssctl.helper import sanitize_domain, typed_config_to_dict
+from ssctl.path import CONFIG_FILE
 from ssctl.proxy import start_proxy
 from ssctl.ssctl_logging import setup_logging
 from ssctl.types import Action, Rule
@@ -38,7 +39,7 @@ def block(domain: str):
     config.rules.append(Rule(action=Action.BLOCK, domain=domain))
 
     # convert typed → dict → TOML
-    CONFIG_PATH.write_text(tomli_w.dumps(typed_config_to_dict(config)))
+    CONFIG_FILE.write_text(tomli_w.dumps(typed_config_to_dict(config)))
 
     typer.echo(f"Blocked {domain}")
 
@@ -48,7 +49,7 @@ def unblock():
     # Why? It's difficult to remove rules
     # if multiple rules are present under same domain
     # next step -> multi select mode or GUI
-    typer.echo(f"Users have to remove the rule directly from {CONFIG_PATH}")
+    typer.echo(f"Users have to remove the rule directly from {CONFIG_FILE}")
 
 
 @app.command()
