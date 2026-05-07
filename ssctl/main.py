@@ -5,7 +5,11 @@ from ssctl.config import CONFIG_PATH, load_config
 from ssctl.exceptions import InvalidDomainError
 from ssctl.helper import sanitize_domain, typed_config_to_dict
 from ssctl.proxy import start_proxy
+from ssctl.ssctl_logging import setup_logging
 from ssctl.types import Action, Rule
+
+# initialize logging globally
+setup_logging()
 
 app = typer.Typer()
 
