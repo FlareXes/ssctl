@@ -1,7 +1,12 @@
+import logging
+from urllib.parse import urlsplit, urlunsplit
+
 from mitmproxy import http
 
 from ssctl.config import load_config
 from ssctl.policy import Policy
+
+logger = logging.getLogger(__name__)
 
 
 # capture http and https requests
@@ -15,7 +20,23 @@ def request(flow: http.HTTPFlow):
     host = flow.request.pretty_host.lower()
     host = host.encode("idna").decode("ascii")
 
-    if policy.is_blocked(host):
+    # capture path e.g. /about, /user?id=1
+    request_path = flow.request.path
+
+    if policy.is_blocked(host, request_path):
+        # capture domain + path without params for logs
+        parsed = urlsplit(flow.request.pretty_url)
+        url = urlunsplit(
+            (
+                parsed.scheme,
+                parsed.netloc,
+                parsed.path,
+                "",  # query
+                "",  # fragment
+            )
+        )
+        logger.info(f"Policy Block {url}")
+
         flow.response = http.Response.make(
             200,
             b"""
