@@ -4,3 +4,11 @@ class InvalidDomainError(ValueError):
     def __init__(self, reason: str):
         self.reason = reason
         super().__init__(reason)
+
+
+class InvalidPathError(ValueError):
+    """Raised when a path is invalid."""
+
+    def __init__(self, reason: str):
+        self.reason = reason
+        super().__init__(reason)

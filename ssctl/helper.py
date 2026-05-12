@@ -1,7 +1,7 @@
 import re
 from urllib.parse import urlsplit
 
-from ssctl.exceptions import InvalidDomainError
+from ssctl.exceptions import InvalidDomainError, InvalidPathError
 from ssctl.types import Config
 
 # Wildcards are intentionally NOT handled here and must be processed first.
@@ -101,35 +101,35 @@ def validate_path(path: str) -> str:
 
     # Must start with /
     if not path.startswith("/"):
-        raise ValueError("Path must start with '/'")
+        raise InvalidPathError("Path must start with '/'")
 
     # Reject encoded chars
     if "%" in path:
-        raise ValueError("Encoded characters are not allowed")
+        raise InvalidPathError("Encoded characters are not allowed")
 
     # Reject queries
     if "?" in path:
-        raise ValueError("Query parameters are not allowed")
+        raise InvalidPathError("Query parameters are not allowed")
 
     # Reject fragments
     if "#" in path:
-        raise ValueError("Fragments are not allowed")
+        raise InvalidPathError("Fragments are not allowed")
 
     # Reject spaces
     if " " in path:
-        raise ValueError("Spaces are not allowed")
+        raise InvalidPathError("Spaces are not allowed")
 
     # Reject traversal
     if ".." in path:
-        raise ValueError("Path traversal is not allowed")
+        raise InvalidPathError("Path traversal is not allowed")
 
     # Reject duplicate slashes
     if "//" in path:
-        raise ValueError("Duplicate slashes are not allowed")
+        raise InvalidPathError("Duplicate slashes are not allowed")
 
     # Strict ASCII-safe validation
     if not PATH_RE.fullmatch(path):
-        raise ValueError("Invalid path characters")
+        raise InvalidPathError("Invalid path characters")
 
     # Remove trailing slash
     if path != "/" and path.endswith("/"):
