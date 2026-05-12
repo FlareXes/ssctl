@@ -20,7 +20,7 @@ def load_config() -> Config:
     data = tomllib.loads(CONFIG_FILE.read_text())
 
     # get defualt global config
-    global_cfg_default = data.get("global", {}).get("default", "allow")
+    global_cfg_default = Action(data.get("global", {}).get("default", "allow"))
 
     # list to store typed Rule objects
     rules = []
