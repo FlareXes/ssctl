@@ -1,7 +1,14 @@
 import tomllib
 
 from ssctl.path import CONFIG_FILE
-from ssctl.types import Action, Config, GlobalConfig, Rule
+from ssctl.types import (
+    Action,
+    BypassRule,
+    Config,
+    GlobalConfig,
+    Rule,
+    Status,
+)
 
 DEFAULT_CONFIG = """
 [global]
@@ -40,4 +47,21 @@ def load_config() -> Config:
 
         rules.append(rule)
 
-    return Config(global_config=GlobalConfig(default=global_cfg_default), rules=rules)
+    bypass_rules = []
+
+    for rule in data.get("bypass_rules", []):
+        host = rule.get("host")
+
+        if not host:
+            continue
+
+        rule = BypassRule(
+            status=Status(rule.get("status", "enabled")),
+            host=host.lower(),
+        )
+
+    return Config(
+        global_config=GlobalConfig(default=global_cfg_default),
+        rules=rules,
+        bypass_rules=bypass_rules,
+    )

@@ -8,11 +8,22 @@ class Action(str, Enum):
     BLOCK = "block"
 
 
+class Status(str, Enum):
+    ENABLED = "enabled"
+    DISABLED = "disabled"
+
+
 @dataclass
 class Rule:
     action: Action
     domain: str
     path: Optional[str] = None
+
+
+@dataclass
+class BypassRule:
+    status: Status
+    host: str
 
 
 @dataclass
@@ -24,3 +35,4 @@ class GlobalConfig:
 class Config:
     global_config: GlobalConfig
     rules: List[Rule]
+    bypass_rules: List[BypassRule]
